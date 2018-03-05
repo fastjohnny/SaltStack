@@ -22,14 +22,33 @@ Starts cluster, disables mssql-server daemon, changes ownership and etc....
 4. Allocate 3 IP's in your network - for the each vm and VIP  
 5. Update pillar/mssql.sls file  
 #### Run  
-``salt 'ms\*' state.apply mssql``  
+```salt 'ms*' state.apply mssql```  
 --------
 ### SSH-provisioning bundle  
 #### Disclaimer  
-Manifests were tested both on debian/centos-like systems  
-#### Info  
+Manifests were tested both on debian/centos-like systems   
+#### Info   
 Configures ssh-provisioning system both on minion and master.  
 Creates users with ssh-rsa keys, enforces ssh-rsa auth, guarantee  
-immutability of ssh configs of each minion.  
-####
-Salt checks in an automatic mode diff between ssh configs on minion 
+immutability of ssh configs on each minion.  
+#### How it works  
+Deploys on each node:  
+- Users wih keys  
+- fail2ban package  
+Configures:  
+- sshd_config   
+- authorized_keys   
+- reactor config on salt-master  
+- runners on salt-master  
+- beacon files on minions    
+After applying state, msater begins polling minion for each file mentioned in reactor config.  
+State itself configures all needed configs on minion side - beacons and salt-minion config.  
+Then state applies all /home/*/.ssh/authorirez_keys and /etc/ssh/sshd_conf configs will be watched by salt master.  
+#### Prereq  
+1. Setup master_reactor.conf on salt master  
+2. Configure ypur master to watch _runners dir   
+3. Prepare your minion by running script deploy_minion.sh  
+4. Configure your pillar/top.sls pillar/vmname.sls states/top.sls files -  
+Enable or Disable linux/create_users manifests  
+#### Run  
+```salt 'vm1' state.apply``` 
