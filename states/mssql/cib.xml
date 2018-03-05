@@ -1,0 +1,44 @@
+<cib admin_epoch="0" epoch="150" num_updates="0" validate-with="pacemaker-1.2">
+  <configuration>
+    <crm_config/>
+    <nodes/>
+    <resources>
+      <group id="MSSQL-Cluster">
+        <primitive class="ocf" id="mssql-share" provider="heartbeat" type="Filesystem">
+          <instance_attributes id="mssql-share-instance_attributes">
+            <nvpair id="mssql-share-instance_attributes-device" name="device" value="/dev/mssql-vg/mssql-lv"/>
+            <nvpair id="mssql-share-instance_attributes-directory" name="directory" value="/var/opt/mssql/data"/>
+            <nvpair id="mssql-share-instance_attributes-fstype" name="fstype" value="xfs"/>
+          </instance_attributes>
+          <operations>
+            <op id="mssql-share-monitor-interval-20" interval="20" name="monitor" timeout="40"/>
+            <op id="mssql-share-start-interval-0s" interval="0s" name="start" timeout="60"/>
+            <op id="mssql-share-stop-interval-0s" interval="0s" name="stop" timeout="60"/>
+          </operations>
+        </primitive>
+        <primitive class="ocf" id="mssql-vip" provider="heartbeat" type="IPaddr2">
+          <instance_attributes id="mssql-vip-instance_attributes">
+            <nvpair id="mssql-vip-instance_attributes-cidr_netmask" name="cidr_netmask" value="NETMASK_VALUE"/>
+            <nvpair id="mssql-vip-instance_attributes-ip" name="ip" value="VIP_VALUE"/>
+            <nvpair id="mssql-vip-instance_attributes-nic" name="nic" value="eth0"/>
+          </instance_attributes>
+          <operations>
+            <op id="mssql-vip-monitor-interval-10s" interval="10s" name="monitor" timeout="20s"/>
+            <op id="mssql-vip-start-interval-0s" interval="0s" name="start" timeout="20s"/>
+            <op id="mssql-vip-stop-interval-0s" interval="0s" name="stop" timeout="20s"/>
+          </operations>
+        </primitive>
+        <primitive class="ocf" id="FCI-mssql" provider="mssql" type="fci">
+          <operations>
+            <op id="FCI-mssql-monitor-interval-10s" interval="10s" name="monitor" timeout="30s"/>
+            <op id="FCI-mssql-start-interval-0s" interval="0s" name="start" timeout="1000"/>
+            <op id="FCI-mssql-stop-interval-0s" interval="0s" name="stop" timeout="20"/>
+          </operations>
+          <meta_attributes id="FCI-mssql-meta_attributes"/>
+        </primitive>
+      </group>
+    </resources>
+    <constraints/>
+  </configuration>
+  <status/>
+</cib>
